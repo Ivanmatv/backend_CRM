@@ -1,5 +1,4 @@
 # Backend_CRM
-CRM systems for Yandex Practice Ambassadors.
 
 ### Description
 CRM systems for Yandex Practice Ambassadors.

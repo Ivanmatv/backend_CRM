@@ -162,3 +162,8 @@ cython_debug/
 .vscode/
 
 media/
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride

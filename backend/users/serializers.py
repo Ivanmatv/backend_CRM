@@ -17,7 +17,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'second_name',
-            # 'role',
         )
 
 
@@ -65,5 +64,4 @@ class CustomLoginSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
         data['email'] = self.user.email
         data['username'] = self.user.username
-        # data['role'] = self.user.role
         return data

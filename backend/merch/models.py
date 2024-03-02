@@ -8,7 +8,6 @@ class Merch(models.Model):
         ('OUT', 'Закончилось'),
     )
 
-    # merch_id = models.PositiveIntegerField(primary_key=True)
     size = models.PositiveIntegerField(
         verbose_name='Размер'
     )
@@ -49,14 +48,19 @@ class Merch(models.Model):
         verbose_name='Изображения'
     )
 
+    class Meta:
+        verbose_name = 'Товар'
+        verbose_name_plural = 'Товары'
+        ordering = ('name',)
+
     def __str__(self) -> str:
-        return f'{self.name}'
+        return (f'Товар {self.name}'
+                f'{"(в наличии)" if self.status else "(закончилось)"}')
 
 
 class Order(models.Model):
     """Model order"""
 
-    # order_id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(
         max_length=100,
         verbose_name='Имя амбассадора'
@@ -71,6 +75,11 @@ class Order(models.Model):
         auto_now_add=True,
         verbose_name='Дата создания'
     )
+
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'
+        ordering = ('pk',)
 
     def __str__(self) -> str:
         return f'{self.name}'
@@ -92,3 +101,11 @@ class MerchOrder(models.Model):
         null=True,
         blank=True,
     )
+
+    class Meta:
+        verbose_name = 'Заказ товара'
+        verbose_name_plural = 'Заказы товаров'
+        ordering = ('pk',)
+
+    def __str__(self):
+        return (f'{self.merch_id} - {self.order_id}')

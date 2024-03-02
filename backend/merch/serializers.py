@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from drf_extra_fields.fields import Base64ImageField
 
-from .models import Merch, Order
+from .models import Merch, Order, MerchOrder
 
 
 class MerchSerializer(serializers.ModelSerializer):
@@ -34,4 +34,14 @@ class OrderSerializer(serializers.ModelField):
             'cost',
             'count',
             'date_creation'
+        )
+
+
+class MerchOrderSerializer(serializers.ModelField):
+
+    class Meta:
+        model = MerchOrder
+        fields = (
+            'mecrh',
+            'order'
         )

@@ -1,63 +1,15 @@
 from django.db import models
-from django.core.validators import MaxValueValidator
-from .validators import validate_domain
-# from merches.models import Merch
+# from django.core.validators import MaxValueValidator
+from merch.models import Merch
 # from tasks.models import Content
 
 
-GENDERS = [
-    ('M', 'Мужской'),
-    ('F', 'Женский'),
-]
-
-COURSES = [
-    ('data_analyst', 'Аналитик данных'),
-    ('data_scientist', 'Специалист по Data Science'),
-    ('python_developer', 'Python-разработчик'),
-    ('web_developer', 'Веб-разработчик'),
-    ('qa', 'Инженер по тестированию (QA)'),
-    ('ux_ui', 'UX/UI-дизайнер'),
-    ('marketing', 'Маркетинг'),
-    ('graphic_designer', 'Графический дизайнер'),
-    ('middle_python', 'Middle Python'),
-    ('c++', 'C++'),
-    ('data_engineer', 'Инженер данных'),
-    ('it-recruiter', 'IT-рекрутер'),
-    ('management', 'Управление'),
-    ('english', 'Английский'),
-    ('critical_thinking', 'Критическое мышление'),
-    ('work_communication', 'Рабочая коммуникация'),
-    ('algorithms', 'Алгоритмы для разработчиков'),
-    ('product_design', 'Продуктовый дизайн'),
-    ('sql', 'SQL для работы с данными и аналитики'),
-    ('java_developer', 'Java-разработчик'),
-    ('illustrator', 'Коммерческий иллюстратор'),
-    ('fullstack_developer', 'Фулстек разработчик'),
-    ('go_developer', 'Продвинутый GO-разработчик'),
-    ('devops', 'DevOps для эксплуатации и разработки'),
-    ('ios_developer', 'IOS-разработчик'),
-    ('business_analyst', 'Бизнес-аналитик'),
-    ('product_manager', 'Продакт-менеджер для специалистов с опытом'),
-    ('android_developer', 'Android-разработчик'),
-    ('project_manager', 'Менеджер проектов'),
-]
-
-
-STATUSES = [
-    ('active', 'Активный'),
-    ('paused', 'На паузе'),
-    ('not_amb', 'Не амбассадор'),
-    ('undefined', 'Уточняется'),
-]
-
-
-class Promocod(models.Model):
-    date_start = models.models.DateTimeField(
+class Promocode(models.Model):
+    date_start = models.DateTimeField(
         'Дата начала',
-        auto_now=True,
-        auto_now_add=False
+        auto_now_add=True
     )
-    date_end = models.models.DateTimeField(
+    date_end = models.DateTimeField(
         'Дата окончания',
         auto_now=False,
         auto_now_add=False
@@ -66,16 +18,69 @@ class Promocod(models.Model):
         'Промокод',
         max_length=32,
     )
-    status = models.models.BooleanField(
-        'Статус промокода',
+    status = models.BooleanField(
+        'Активен',
     )
+
+    class Meta:
+        verbose_name = 'Промокод'
+        verbose_name_plural = 'Промокоды'
+        ordering = ('pk',)
+
+    def __str__(self):
+        return (f'Промокод {self.name} '
+                f'{"(активен)" if self.status else "(неактивен)"}')
 
 
 class Ambassador(models.Model):
-    ambassador_telegram = models.CharField(
+    GENDERS = [
+        ('M', 'Мужской'),
+        ('F', 'Женский'),
+    ]
+
+    COURSES = [
+        ('data_analyst', 'Аналитик данных'),
+        ('data_scientist', 'Специалист по Data Science'),
+        ('python_developer', 'Python-разработчик'),
+        ('web_developer', 'Веб-разработчик'),
+        ('qa', 'Инженер по тестированию (QA)'),
+        ('ux_ui', 'UX/UI-дизайнер'),
+        ('marketing', 'Маркетинг'),
+        ('graphic_designer', 'Графический дизайнер'),
+        ('middle_python', 'Middle Python'),
+        ('c++', 'C++'),
+        ('data_engineer', 'Инженер данных'),
+        ('it-recruiter', 'IT-рекрутер'),
+        ('management', 'Управление'),
+        ('english', 'Английский'),
+        ('critical_thinking', 'Критическое мышление'),
+        ('work_communication', 'Рабочая коммуникация'),
+        ('algorithms', 'Алгоритмы для разработчиков'),
+        ('product_design', 'Продуктовый дизайн'),
+        ('sql', 'SQL для работы с данными и аналитики'),
+        ('java_developer', 'Java-разработчик'),
+        ('illustrator', 'Коммерческий иллюстратор'),
+        ('fullstack_developer', 'Фулстек разработчик'),
+        ('go_developer', 'Продвинутый GO-разработчик'),
+        ('devops', 'DevOps для эксплуатации и разработки'),
+        ('ios_developer', 'IOS-разработчик'),
+        ('business_analyst', 'Бизнес-аналитик'),
+        ('product_manager', 'Продакт-менеджер для специалистов с опытом'),
+        ('android_developer', 'Android-разработчик'),
+        ('project_manager', 'Менеджер проектов'),
+    ]
+
+    STATUSES = [
+        ('active', 'Активный'),
+        ('paused', 'На паузе'),
+        ('not_amb', 'Не амбассадор'),
+        ('undefined', 'Уточняется'),
+    ]
+
+    telegram = models.CharField(
         'Ник в телеграме',
-        primary_key=True,
         max_length=32,
+        unique=True
     )
     first_name = models.CharField(
         'Имя',
@@ -111,19 +116,18 @@ class Ambassador(models.Model):
         'Адрес',
         max_length=100,
     )
-    postcode = models.models.PositiveIntegerField(
-        'Индекс',
-        validators=[MaxValueValidator(100)],
-    )
-    email = models.models.EmailField(
+    # postcode = models.PositiveIntegerField(
+    #     'Индекс',
+    #     validators=[MaxValueValidator(999999)],
+    # )
+    email = models.EmailField(
         'Email',
-        validators=[validate_domain],
     )
-    phone = models.models.CharField(
+    phone = models.CharField(
         'Телефон',
         max_length=25,
     )
-    education = models.models.CharField(
+    education = models.CharField(
         'Образование',
         max_length=256,
     )
@@ -132,28 +136,27 @@ class Ambassador(models.Model):
         choices=STATUSES,
         max_length=11,
     )
-    work = models.models.CharField(
+    work = models.CharField(
         'Место работы',
         max_length=256,
     )
-    promocod = models.ManyToManyField(
-        Promocod,
-        through='AmbassadorPromocod',
+    promocode_id = models.ManyToManyField(
+        Promocode,
+        through='AmbassadorPromocode',
         verbose_name='Промокод',
-        related_name='promocod',
-        on_delete=models.CASCADE
+        related_name='promocode'
     )
     # content_id = models.models.ForeignKey(
     #     Content,
     #     verbose_name=('Контент'),
     #     on_delete=models.CASCADE
     # )
-    # amb_merch = models.ManyToManyField(
-    #     Merch,
-    #     through='',
-    #     verbose_name=('Мерч'),
-    #     on_delete=models.CASCADE
-    # )
+    merch_id = models.ManyToManyField(
+        Merch,
+        through='AmbassadorMerch',
+        verbose_name='Мерч',
+        related_name='merch'
+    )
 
     class Meta:
         verbose_name = 'Амбассадор'
@@ -161,19 +164,50 @@ class Ambassador(models.Model):
         ordering = ('pk',)
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return f'Амбассадор {self.first_name} {self.last_name}'
 
 
-class AmbassadorPromocod(models.Model):
-    ambassador_telegram = models.ForeignKey(
+class AmbassadorPromocode(models.Model):
+    ambassador_id = models.ForeignKey(
         Ambassador,
-        verbose_name='Телеграм амбассадора',
+        verbose_name='Амбассадор',
         on_delete=models.CASCADE,
         related_name='ambassador_tg'
     )
-    promocod_id = models.ForeignKey(
-        Promocod,
+    promocode_id = models.ForeignKey(
+        Promocode,
         verbose_name='Промокод',
         on_delete=models.CASCADE,
-        related_name='ambassador_tg'
+        related_name='tg_ambassador'
     )
+
+    class Meta:
+        verbose_name = 'Промокод амбассадора'
+        verbose_name_plural = 'Промокоды амбассадоров'
+        ordering = ('pk',)
+
+    def __str__(self):
+        return (f'{self.promocode_id} - {self.ambassador_id}')
+
+
+class AmbassadorMerch(models.Model):
+    merch_id = models.ForeignKey(
+        Merch,
+        verbose_name='Мерч',
+        on_delete=models.CASCADE,
+        related_name='merch_amb'
+    )
+    ambassador_id = models.ForeignKey(
+        Ambassador,
+        verbose_name='Амбассадор',
+        on_delete=models.CASCADE,
+        related_name='amb_merch'
+    )
+
+    class Meta:
+        verbose_name = 'Мерч амбассадора'
+        verbose_name_plural = 'Мерч амбассадоров'
+        ordering = ('pk',)
+
+    def __str__(self):
+        return (f'{self.merch_id} - {self.ambassador_id}')

@@ -8,7 +8,7 @@ class Merch(models.Model):
         ('OUT', 'Закончилось'),
     )
 
-    merch_id = models.PositiveIntegerField(primary_key=True)
+    # merch_id = models.PositiveIntegerField(primary_key=True)
     size = models.PositiveIntegerField(
         verbose_name='Размер'
     )
@@ -33,7 +33,7 @@ class Merch(models.Model):
     )
     category = models.CharField(
         max_length=50,
-        verbose_name='Категоия'
+        verbose_name='Категория'
     )
     data_creation = models.DateTimeField(
         auto_now_add=True,
@@ -56,22 +56,21 @@ class Merch(models.Model):
 class Order(models.Model):
     """Model order"""
 
-    order_id = models.PositiveIntegerField(primary_key=True)
+    # order_id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(
         max_length=100,
         verbose_name='Имя амбассадора'
     )
     cost = models.FloatField(
-        verbose_name='Цена мерча'
+        verbose_name='Цена товара'
     )
     count = models.IntegerField(
-        verbose_name='Количество мерча'
+        verbose_name='Количество товара'
     )
     date_creation = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Дата создания'
     )
-    merch = models.CharField()
 
     def __str__(self) -> str:
         return f'{self.name}'
@@ -79,14 +78,14 @@ class Order(models.Model):
 
 class MerchOrder(models.Model):
     """Model connection between merch and order"""
-    merch_id = models.ForeignKey(
+    merch = models.ForeignKey(
         Merch,
         related_name='merch_merch',
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    merch = models.ForeignKey(
+    order = models.ForeignKey(
         Order,
         related_name='merch_merch',
         on_delete=models.CASCADE,

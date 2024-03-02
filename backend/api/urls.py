@@ -7,7 +7,14 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.routers import DefaultRouter
 
+from merch.views import MerchViewSet, OrderViewSet
+
+app_name = 'api'
+
 router = DefaultRouter()
+router.register(r'merch', MerchViewSet, basename='merch')
+router.register(r'order', OrderViewSet, basename='order')
+
 
 urlpatterns = [
     path('signup/', UserViewSet.as_view({'post': 'create'}), name='signup'),

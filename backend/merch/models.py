@@ -7,9 +7,12 @@ class Merch(models.Model):
         ('IN STOCK', 'В наличии'),
         ('OUT', 'Закончилось'),
     )
-    # merch_id = models.AutoField(primary_key=True)
-    size = models.PositiveIntegerField(
-        verbose_name='Размер'
+    
+    size_foot = models.PositiveIntegerField(
+        verbose_name='Размер обуви'
+    )
+    size_shirt = models.PositiveIntegerField(
+        verbose_name='Размер одежды'
     )
     price = models.FloatField(
         verbose_name='Цена'
@@ -63,7 +66,6 @@ class Merch(models.Model):
 class Order(models.Model):
     """Model order"""
 
-    # order_id = models.AutoField(primary_key=True)
     name = models.CharField(
         max_length=100,
         verbose_name='Имя амбассадора'

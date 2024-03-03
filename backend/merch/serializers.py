@@ -13,7 +13,8 @@ class MerchSerializer(serializers.ModelSerializer):
         model = Merch
         fields = (
             'id',
-            'size',
+            'size_foot',
+            'size_shirt',
             'price',
             'name',
             'desc',

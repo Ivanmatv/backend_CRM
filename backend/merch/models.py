@@ -93,16 +93,12 @@ class MerchOrder(models.Model):
     merch = models.ForeignKey(
         Merch,
         related_name='merch_merch',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
+        on_delete=models.CASCADE
     )
     order = models.ForeignKey(
         Order,
         related_name='merch_merch',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE
     )
 
     class Meta:

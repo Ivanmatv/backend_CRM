@@ -7,15 +7,17 @@ from .models import Merch, Order, MerchOrder
 
 class MerchSerializer(serializers.ModelSerializer):
     """Serializer to read/update merchandises"""
-    image = Base64ImageField(max_length=None)
+    image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Merch
         fields = (
+            'id',
             'size',
             'price',
             'name',
             'desc',
+            'quantity',
             'status',
             'category',
             'data_creation',
@@ -24,12 +26,13 @@ class MerchSerializer(serializers.ModelSerializer):
         )
 
 
-class OrderSerializer(serializers.ModelField):
+class OrderSerializer(serializers.ModelSerializer):
     """Serializer to read/update order"""
 
     class Meta:
         model = Order
         fields = (
+            'id',
             'name',
             'cost',
             'count',

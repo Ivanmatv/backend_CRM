@@ -7,7 +7,7 @@ class Merch(models.Model):
         ('IN STOCK', 'В наличии'),
         ('OUT', 'Закончилось'),
     )
-
+    # merch_id = models.AutoField(primary_key=True)
     size = models.PositiveIntegerField(
         verbose_name='Размер'
     )
@@ -22,7 +22,7 @@ class Merch(models.Model):
         max_length=200,
         verbose_name='Описание'
     )
-    quantity = models.IntegerField(
+    quantity = models.PositiveIntegerField(
         verbose_name='Количество',
     )
     status = models.CharField(
@@ -36,7 +36,6 @@ class Merch(models.Model):
     )
     data_creation = models.DateTimeField(
         auto_now_add=True,
-        db_index=True,
         verbose_name='Дата создания'
     )
     data_update = models.DateTimeField(
@@ -45,7 +44,10 @@ class Merch(models.Model):
     )
     image = models.FileField(
         upload_to='merchs/media/image/',
-        verbose_name='Изображения'
+        verbose_name='Изображения',
+        blank=True,
+        null=True,
+        default=None
     )
 
     class Meta:
@@ -61,6 +63,7 @@ class Merch(models.Model):
 class Order(models.Model):
     """Model order"""
 
+    # order_id = models.AutoField(primary_key=True)
     name = models.CharField(
         max_length=100,
         verbose_name='Имя амбассадора'

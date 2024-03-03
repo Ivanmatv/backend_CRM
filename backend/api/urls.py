@@ -14,7 +14,8 @@ app_name = 'api'
 router = DefaultRouter()
 router.register(r'merch', MerchViewSet, basename='merch')
 router.register(r'order', OrderViewSet, basename='order')
-router.register(r'ordering_merch', MerchOrderViewSet, basename='ordering_merch')
+router.register(r'ordering_merch',
+                MerchOrderViewSet, basename='ordering_merch')
 
 
 urlpatterns = [

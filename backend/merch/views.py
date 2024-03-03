@@ -23,7 +23,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     search_fields = ('name', )
 
 
-class MerchOrderViewSet(viewsets.ModelViewSet):
-    """Order presentation"""
+class MerchOrderViewSet(viewsets.ReadOnlyModelViewSet):
+    """Representation of the order merchandise"""
     queryset = MerchOrder.objects.all()
     serializer_class = MerchOrderSerializer

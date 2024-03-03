@@ -92,13 +92,15 @@ class MerchOrder(models.Model):
     """Model connection between merch and order"""
     merch = models.ForeignKey(
         Merch,
-        related_name='merch_merch',
-        on_delete=models.CASCADE
+        related_name='merchorder',
+        on_delete=models.CASCADE,
+        verbose_name='Товар'
     )
     order = models.ForeignKey(
         Order,
-        related_name='merch_merch',
-        on_delete=models.CASCADE
+        related_name='merchorder',
+        on_delete=models.CASCADE,
+        verbose_name='Заказ'
     )
 
     class Meta:

@@ -40,11 +40,12 @@ class OrderSerializer(serializers.ModelSerializer):
         )
 
 
-class MerchOrderSerializer(serializers.ModelField):
+class MerchOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MerchOrder
         fields = (
-            'mecrh',
+            'id',
+            'merch',
             'order'
         )

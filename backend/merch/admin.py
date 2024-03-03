@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Merch, Order
+from .models import Merch, Order, MerchOrder
 
 
 @admin.register(Merch)
@@ -53,4 +53,12 @@ class OrderAdmin(admin.ModelAdmin):
         'count',
         'date_creation'
     )
+    empty_value_display = '-пусто-'
+
+
+@admin.register(MerchOrder)
+class MerchOrderAdmin(admin.ModelAdmin):
+    list_display = ('order', 'merch')
+    list_filter = ('order', 'merch',)
+    search_fields = ('order', 'merch')
     empty_value_display = '-пусто-'

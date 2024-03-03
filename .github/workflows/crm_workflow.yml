@@ -1,4 +1,4 @@
-name: crm workflow
+name: ambassadors_crm workflow
 
 on: [push]
 
@@ -50,7 +50,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/crm_ambassadorship:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/ambassadors_crm:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -63,14 +63,9 @@ jobs:
         host: ${{ secrets.HOST_IP }}
         username: ${{ secrets.HOST_USERNAME }}
         password: ${{ secrets.HOST_PASSWORD }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
             sudo docker-compose stop
             sudo docker-compose rm -f backend
-            sudo docker image rm -f ${{ secrets.DOCKER_USERNAME }}/crm_ambassadorship:latest
-            touch .env
-            echo DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} >> .env
-            echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
+            sudo docker image rm -f ${{ secrets.DOCKER_USERNAME }}/ambassadors_crm:latest
             sudo docker-compose pull
             sudo docker-compose up -d

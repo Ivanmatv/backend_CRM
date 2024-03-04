@@ -1,7 +1,7 @@
-# Backend_CRM
+# Ambassadors CRM-system
 
 ### Description
-CRM systems for Yandex Practice Ambassadors.
+CRM-system for Yandex Practice Ambassadors.
 
 ### Quick Start
 1. Clone repo
@@ -48,4 +48,4 @@ http://127.0.0.1:8000/api/redoc/
 [Sergey Chukin](https://github.com/ChukSerg)
 
 ### CI/CD pipeline status
-[![crm workflow](https://github.com/Ivanmatv/backend_CRM/actions/workflows/crm_workflow.yml/badge.svg)](https://github.com/Ivanmatv/backend_CRM/actions/workflows/crm_workflow.yml)
+[![Ambassadors CRM workflow](https://github.com/Ivanmatv/backend_CRM/actions/workflows/crm_workflow.yml/badge.svg)](https://github.com/Ivanmatv/backend_CRM/actions/workflows/crm_workflow.yml)

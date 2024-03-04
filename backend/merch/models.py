@@ -7,7 +7,7 @@ class Merch(models.Model):
         ('IN STOCK', 'В наличии'),
         ('OUT', 'Закончилось'),
     )
-
+    
     size_foot = models.PositiveIntegerField(
         verbose_name='Размер обуви'
     )

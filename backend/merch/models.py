@@ -7,9 +7,21 @@ class Merch(models.Model):
         ('IN STOCK', 'В наличии'),
         ('OUT', 'Закончилось'),
     )
-    # merch_id = models.AutoField(primary_key=True)
-    size = models.PositiveIntegerField(
-        verbose_name='Размер'
+    SIZE = (
+        ('XS', 'XS'),
+        ('S', 'S'),
+        ('M', 'M'),
+        ('L', 'L'),
+        ('XL', 'XL'),
+    )
+    size_foot = models.PositiveIntegerField(
+        verbose_name='Размер обуви, см',
+        default=None
+    )
+    size_shirt = models.CharField(
+        verbose_name='Размер одежды',
+        max_length=10,
+        choices=SIZE
     )
     price = models.FloatField(
         verbose_name='Цена'
@@ -39,11 +51,11 @@ class Merch(models.Model):
         verbose_name='Дата создания'
     )
     data_update = models.DateTimeField(
-        auto_now_add=True,
+        auto_now=True,
         verbose_name='Дата обновления'
     )
     image = models.FileField(
-        upload_to='merchs/media/image/',
+        upload_to='media/image/',
         verbose_name='Изображения',
         blank=True,
         null=True,
@@ -56,22 +68,21 @@ class Merch(models.Model):
         ordering = ('name',)
 
     def __str__(self) -> str:
-        return (f'Товар {self.name}'
-                f'{"(в наличии)" if self.status else "(закончилось)"}')
+        return (f'{self.name} '
+                f'{"(в наличии )" if self.status else "(закончилось)"}')
 
 
 class Order(models.Model):
     """Model order"""
 
-    # order_id = models.AutoField(primary_key=True)
     name = models.CharField(
         max_length=100,
         verbose_name='Имя амбассадора'
     )
-    cost = models.FloatField(
+    cost = models.PositiveIntegerField(
         verbose_name='Цена товара'
     )
-    count = models.IntegerField(
+    count = models.PositiveSmallIntegerField(
         verbose_name='Количество товара'
     )
     date_creation = models.DateTimeField(

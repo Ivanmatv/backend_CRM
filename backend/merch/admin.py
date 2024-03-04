@@ -6,9 +6,10 @@ from .models import Merch, Order, MerchOrder
 @admin.register(Merch)
 class MerchAdmin(admin.ModelAdmin):
     list_display = (
-        'size',
-        'price',
         'name',
+        'size_foot',
+        'size_shirt',
+        'price',
         'desc',
         'status',
         'category',
@@ -16,7 +17,8 @@ class MerchAdmin(admin.ModelAdmin):
         'data_update',
     )
     list_filter = (
-        'size',
+        'size_foot',
+        'size_shirt',
         'price',
         'name',
         'status',
@@ -25,7 +27,8 @@ class MerchAdmin(admin.ModelAdmin):
         'data_update'
     )
     search_fields = (
-        'size',
+        'size_foot',
+        'size_shirt',
         'price',
         'name',
         'category'

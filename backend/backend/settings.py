@@ -26,7 +26,7 @@ SECRET_KEY = 'gq)4ibriru7$9!d2kl$ts+j@eqp=8km+2t99vr!sge+3$--3+p'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*', '127.0.0.1']
 
 
 # Application definition
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'api',
     'users',
     'ambassadors'
+    'merch',
 ]
 
 MIDDLEWARE = [
@@ -182,8 +183,8 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'BlackFox API',
-    'DESCRIPTION': 'API documentation for BlackFox App',
+    'TITLE': 'Ambassadors CRM-system',
+    'DESCRIPTION': 'API documentation for Ambassadors CRM-system',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,

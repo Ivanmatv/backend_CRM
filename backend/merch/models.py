@@ -80,9 +80,9 @@ class Order(models.Model):
         verbose_name='Имя амбассадора'
     )
     cost = models.PositiveIntegerField(
-        verbose_name='Цена товара'
+        verbose_name='Стоймость'
     )
-    count = models.PositiveSmallIntegerField(
+    count = models.PositiveIntegerField(
         verbose_name='Количество товара'
     )
     date_creation = models.DateTimeField(
@@ -111,7 +111,7 @@ class MerchOrder(models.Model):
         Order,
         related_name='merchorder',
         on_delete=models.CASCADE,
-        verbose_name='Заказ'
+        verbose_name='Амбассадор'
     )
 
     class Meta:

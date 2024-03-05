@@ -6,9 +6,11 @@ from .models import Merch, Order, MerchOrder
 
 
 class MerchSerializer(serializers.ModelSerializer):
-    """Serializer to read/update merchandises"""
+    """Serializer for the merchandise"""
     image = Base64ImageField(required=False, allow_null=True)
     size_foot = serializers.IntegerField()
+    quantity = serializers.IntegerField()
+    price = serializers.IntegerField()
 
     class Meta:
         model = Merch
@@ -21,16 +23,47 @@ class MerchSerializer(serializers.ModelSerializer):
             )
         return size_foot
 
+    def validate_quantity(self, quantity):
+        if quantity < 1:
+            raise serializers.ValidationError(
+                "Количество должно быть больше 0"
+            )
+        return quantity
+
+    def validate_price(self, price):
+        if price < 1:
+            raise serializers.ValidationError(
+                "Цена должна быть больше 0"
+            )
+        return price
+
 
 class OrderSerializer(serializers.ModelSerializer):
-    """Serializer to read/update order"""
+    """Serializer for the order"""
+    cost = serializers.IntegerField()
+    count = serializers.IntegerField()
 
     class Meta:
         model = Order
         fields = ('__all__')
+ 
+    def validate_count(self, quantity):
+        if quantity < 1:
+            raise serializers.ValidationError(
+                "Количество должно быть больше 0"
+            )
+        return quantity
+
+    def validate_cost(self, price):
+        if price < 1:
+            raise serializers.ValidationError(
+                "Стоймость должна быть больше 0"
+            )
+        return price
 
 
 class MerchOrderSerializer(serializers.ModelSerializer):
+    """Serializer for the order of ambassador"""
 
     class Meta:
         model = MerchOrder

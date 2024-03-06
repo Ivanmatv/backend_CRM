@@ -42,11 +42,15 @@ class OrderSerializer(serializers.ModelSerializer):
     """Serializer for the order"""
     cost = serializers.IntegerField()
     count = serializers.IntegerField()
+    merch = serializers.StringRelatedField(
+        many=True,
+        read_only=True
+    )
 
     class Meta:
         model = Order
         fields = ('__all__')
- 
+
     def validate_count(self, quantity):
         if quantity < 1:
             raise serializers.ValidationError(

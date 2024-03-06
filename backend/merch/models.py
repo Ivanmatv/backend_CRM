@@ -1,5 +1,7 @@
 from django.db import models
 
+# from ambassadors.models import Ambassadaor
+
 
 class Merch(models.Model):
     """Model merchandise"""
@@ -16,12 +18,16 @@ class Merch(models.Model):
     )
     size_foot = models.PositiveIntegerField(
         verbose_name='Размер обуви, см',
-        default=None
+        default=None,
+        null=True,
+        blank=True
     )
     size_shirt = models.CharField(
         verbose_name='Размер одежды',
         max_length=10,
-        choices=SIZE
+        choices=SIZE,
+        null=True,
+        blank=True
     )
     price = models.FloatField(
         verbose_name='Цена'
@@ -32,7 +38,9 @@ class Merch(models.Model):
     )
     desc = models.CharField(
         max_length=200,
-        verbose_name='Описание'
+        verbose_name='Описание',
+        null=True,
+        blank=True
     )
     quantity = models.PositiveIntegerField(
         verbose_name='Количество',
@@ -77,7 +85,7 @@ class Order(models.Model):
 
     name = models.CharField(
         max_length=100,
-        verbose_name='Имя амбассадора'
+        verbose_name='Название'
     )
     cost = models.PositiveIntegerField(
         verbose_name='Стоймость'
@@ -88,6 +96,12 @@ class Order(models.Model):
     date_creation = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Дата создания'
+    )
+    merch = models.ManyToManyField(
+        Merch,
+        through='MerchOrder',
+        related_name='merchs',
+        verbose_name='Товары'
     )
 
     class Meta:
@@ -111,13 +125,19 @@ class MerchOrder(models.Model):
         Order,
         related_name='merchorder',
         on_delete=models.CASCADE,
-        verbose_name='Амбассадор'
+        verbose_name='Заказ'
     )
 
     class Meta:
         verbose_name = 'Заказ товара'
         verbose_name_plural = 'Заказы товаров'
         ordering = ('pk',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['merch', 'order'],
+                name='unique_merch_order'
+            )
+        ]
 
     def __str__(self):
         return (f'{self.merch_id} - {self.order_id}')

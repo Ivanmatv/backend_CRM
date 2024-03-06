@@ -1,7 +1,5 @@
 from django.db import models
 
-# from ambassadors.models import Ambassadaor
-
 
 class Merch(models.Model):
     """Model merchandise"""

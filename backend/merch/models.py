@@ -130,12 +130,7 @@ class MerchOrder(models.Model):
         verbose_name = 'Заказ товара'
         verbose_name_plural = 'Заказы товаров'
         ordering = ('pk',)
-        constraints = [
-            models.UniqueConstraint(
-                fields=['merch', 'order'],
-                name='unique_merch_order'
-            )
-        ]
+        unique_together = ('merch', 'order')
 
     def __str__(self):
         return (f'{self.merch_id} - {self.order_id}')

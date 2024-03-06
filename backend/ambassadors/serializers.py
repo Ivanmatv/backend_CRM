@@ -1,6 +1,6 @@
 from rest_framework import serializers
-# from merch.models import Merch
-from .models import Ambassador, Promocode, AmbassadorPromocode, AmbassadorMerch, Merch
+from merch.models import Merch
+from .models import Ambassador, Promocode, AmbassadorPromocode, AmbassadorMerch
 
 
 class GetPromocodeSerializer(serializers.ModelSerializer):
@@ -27,65 +27,86 @@ class AddPromocodeSerializer(serializers.ModelSerializer):
         return promocode
 
 
-class AmbassadorPromocodeSerializer(serializers.ModelSerializer):
+class GetMerchSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = ('ambassador', 'promocode')
+        fields = ('id', 'name', 'desc', 'size_foot', 'size_shirt', 'price',
+                  'quantity', 'data_creation', 'data_update')
+        model = Merch
+
+
+class AmbassadorMerchSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('pk', 'merch')
+        model = AmbassadorMerch
+
+
+class GetAmbassadorPromocodeSerializer(serializers.ModelSerializer):
+    promocodes = GetPromocodeSerializer(read_only=True, source='promocode')
+
+    class Meta:
+        fields = ('ambassador', 'promocodes')
         model = AmbassadorPromocode
+
+
+class AddAmbassadorPromocodeSerializer(serializers.ModelSerializer):
+    promocode = AddPromocodeSerializer()
+
+    class Meta:
+        fields = ('promocode',)
+        model = AmbassadorPromocode
+
+    def create(self, validated_data):
+        ambassador = validated_data.pop('ambassador')
+        promocode = validated_data.pop('promocode')
+        print(promocode)
+
+        promocode = Promocode.objects.create(**promocode)
+
+        AmbassadorPromocode.objects.create(
+            ambassador=ambassador, promocode=promocode)
+
+        return promocode
+
+    def to_representation(self, instance):
+        return GetPromocodeSerializer(
+            instance,
+            context={
+                'request': self.context.get('request')
+            }
+        ).data
 
 
 class GetAmbassadorSerializer(serializers.ModelSerializer):
     promocodes = GetPromocodeSerializer(
         many=True, read_only=True, source='promocode'
     )
-    merch = serializers.PrimaryKeyRelatedField(
-        queryset=Merch.objects.all(), many=True, required=False
-    )
+    merch = GetMerchSerializer(many=True, read_only=True)
 
     class Meta:
-        fields = ('id', 'telegram', 'first_name', 'last_name',
-                  'second_name', 'gender', 'course', 'country', 'city',
-                  'address', 'email', 'phone', 'education', 'status', 'work',
-                  'promocodes', 'merch'
-                  # 'content',
-                  )
+        fields = (
+            'id', 'telegram', 'first_name', 'last_name', 'second_name',
+            'gender', 'course', 'country', 'postcode', 'city', 'address',
+            'email', 'phone', 'education', 'status', 'work', 'purpose',
+            'social', 'shirt_size', 'foot_size', 'promocodes', 'merch',
+            'comments', 'create_date', 'completed_guide'
+        )
+        # 'content',
+
         model = Ambassador
 
 
 class AddAmbassadorSerializer(serializers.ModelSerializer):
-    promocodes = AddPromocodeSerializer(
-        many=False, required=False, source='promocode'
-    )
-    merch = serializers.PrimaryKeyRelatedField(
-        queryset=Merch.objects.all(), many=True, required=False
-    )
 
     class Meta:
-        fields = ('id', 'telegram', 'first_name', 'last_name',
-                  'second_name', 'gender', 'course', 'country', 'city',
-                  'address', 'email', 'phone', 'education', 'status', 'work',
-                  'promocodes', 'merch'
-                  # 'content',
-                  )
+        fields = (
+            'id', 'telegram', 'first_name', 'last_name', 'second_name',
+            'gender', 'course', 'country', 'postcode', 'city', 'address',
+            'email', 'phone', 'education', 'work', 'purpose', 'social',
+            'shirt_size', 'foot_size', 'comments',
+        )
         model = Ambassador
-
-    def create(self, validated_data):
-        promocode_data = validated_data.pop('promocode', None)
-        merch_data = validated_data.pop('merch', None)
-
-        ambassador = Ambassador.objects.create(**validated_data)
-
-        if promocode_data:
-            promocode, status = Promocode.objects.get_or_create(
-                **promocode_data)
-
-            AmbassadorPromocode.objects.create(
-                ambassador=ambassador, promocode=promocode)
-
-        if merch_data:
-            ambassador.merch.set(merch_data)
-
-        return ambassador
 
     def to_representation(self, instance):
         return GetAmbassadorSerializer(
@@ -94,11 +115,3 @@ class AddAmbassadorSerializer(serializers.ModelSerializer):
                 'request': self.context.get('request')
             }
         ).data
-
-
-class AmbassadorMerchSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        fields = ('pk', 'ambassador', 'merch')
-        model = AmbassadorMerch
-

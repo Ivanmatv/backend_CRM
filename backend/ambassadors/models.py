@@ -1,64 +1,7 @@
 from django.db import models
-# from django.core.validators import MaxValueValidator
-# from merch.models import Merch
+from django.core.validators import MaxValueValidator
+from merch.models import Merch
 # from tasks.models import Content
-
-
-class Merch(models.Model):
-    """Model merchandise"""
-    STATUS = (
-        ('IN STOCK', 'В наличии'),
-        ('OUT', 'Закончилось'),
-    )
-
-    size = models.PositiveIntegerField(
-        verbose_name='Размер'
-    )
-    price = models.FloatField(
-        verbose_name='Цена'
-    )
-    name = models.CharField(
-        max_length=100,
-        verbose_name='Название'
-    )
-    desc = models.CharField(
-        max_length=200,
-        verbose_name='Описание'
-    )
-    quantity = models.IntegerField(
-        verbose_name='Количество',
-    )
-    status = models.CharField(
-        max_length=50,
-        verbose_name='Наличие',
-        choices=STATUS
-    )
-    category = models.CharField(
-        max_length=50,
-        verbose_name='Категория'
-    )
-    data_creation = models.DateTimeField(
-        auto_now_add=True,
-        db_index=True,
-        verbose_name='Дата создания'
-    )
-    data_update = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Дата обновления'
-    )
-    image = models.FileField(
-        upload_to='merchs/media/image/',
-        verbose_name='Изображения'
-    )
-
-    class Meta:
-        verbose_name = 'Товар'
-        verbose_name_plural = 'Товары'
-        ordering = ('name',)
-
-    def __str__(self) -> str:
-        return (f'Товар {self.name}'
-                f'{"(в наличии)" if self.status else "(закончилось)"}')
 
 
 class Promocode(models.Model):
@@ -128,12 +71,27 @@ class Ambassador(models.Model):
         ('project_manager', 'Менеджер проектов'),
     ]
 
+    PURPOSES = [
+        ('profession', 'Получение новой профессии, чтобы сменить работу'),
+        ('knowledge', 'Углубление имеющихся знаний, '
+                      'чтобы использовать их в текущей работе'),
+        ('other', 'Другое')
+    ]
+
     STATUSES = [
         ('active', 'Активный'),
         ('paused', 'На паузе'),
         ('not_amb', 'Не амбассадор'),
         ('undefined', 'Уточняется'),
     ]
+
+    SIZES = (
+        ('XS', 'XS'),
+        ('S', 'S'),
+        ('M', 'M'),
+        ('L', 'L'),
+        ('XL', 'XL'),
+    )
 
     telegram = models.CharField(
         'Ник в телеграме',
@@ -174,10 +132,10 @@ class Ambassador(models.Model):
         'Адрес',
         max_length=100,
     )
-    # postcode = models.PositiveIntegerField(
-    #     'Индекс',
-    #     validators=[MaxValueValidator(999999)],
-    # )
+    postcode = models.PositiveIntegerField(
+        'Индекс',
+        validators=[MaxValueValidator(999999)],
+    )
     email = models.EmailField(
         'Email',
     )
@@ -205,6 +163,29 @@ class Ambassador(models.Model):
         verbose_name='Промокод',
         related_name='promocodes'
     )
+    purpose = models.CharField(
+        'Цель обучения в Практикуме',
+        choices=PURPOSES,
+        max_length=12
+    )
+    social = models.URLField(
+        'Ссылка на соцсеть',
+        null=True
+    )
+    comments = models.CharField(
+        'О себе',
+        null=True,
+        max_length=1000
+    )
+    shirt_size = models.CharField(
+        'Размер одежды',
+        choices=SIZES,
+        max_length=2,
+    )
+    foot_size = models.PositiveSmallIntegerField(
+        'Размер обуви',
+        validators=[MaxValueValidator(50)]
+    )
     # content = models.models.ForeignKey(
     #     Content,
     #     verbose_name=('Контент'),
@@ -216,6 +197,14 @@ class Ambassador(models.Model):
         verbose_name='Мерч',
         related_name='merch'
     )
+    create_date = models.DateTimeField(
+        'Дата создания',
+        auto_now_add=True
+    )
+    completed_guide = models.BooleanField(
+        'Амбассадор прошел Онбординг',
+        default=False,
+    )
 
     class Meta:
         verbose_name = 'Амбассадор'
@@ -224,6 +213,50 @@ class Ambassador(models.Model):
 
     def __str__(self):
         return f'Амбассадор {self.first_name} {self.last_name}'
+
+
+class WorkIt(models.Model):
+    ambassador = models.ForeignKey(
+        Ambassador,
+        verbose_name='ID амбассадора',
+        on_delete=models.CASCADE
+    )
+    is_blog = models.BooleanField(
+        'Вести блог',
+        default=False
+    )
+    is_community = models.BooleanField(
+        'Развивать сообщество',
+        default=False
+    )
+    is_articles = models.BooleanField(
+        'Писать статьи',
+        default=False
+    )
+    is_video = models.BooleanField(
+        'Снимать видео',
+        default=False
+    )
+    is_workshop = models.BooleanField(
+        'Знакомить коллег с ЯП',
+        default=False
+    )
+    is_advice = models.BooleanField(
+        'Консультировать по ЯП',
+        default=False
+    )
+    is_events = models.BooleanField(
+        'Выступать на мероприятиях',
+        default=False
+    )
+
+    class Meta:
+        verbose_name = 'Желаемая деятельность'
+        verbose_name_plural = 'Желаемые виды деятельности'
+        ordering = ('pk',)
+
+    def __str__(self):
+        return f'{self.ambassador.first_name} {self.ambassador.last_name}'
 
 
 class AmbassadorPromocode(models.Model):

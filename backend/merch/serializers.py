@@ -8,7 +8,7 @@ from .models import Merch, Order, MerchOrder
 class MerchSerializer(serializers.ModelSerializer):
     """Serializer for the merchandise"""
     image = Base64ImageField(required=False, allow_null=True)
-    size_foot = serializers.IntegerField()
+    size_foot = serializers.IntegerField(required=False)
     quantity = serializers.IntegerField()
     price = serializers.IntegerField()
 
@@ -46,6 +46,7 @@ class OrderSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True
     )
+    date_creation = serializers.ReadOnlyField()
 
     class Meta:
         model = Order

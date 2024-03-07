@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'api',
     'users',
     'merch',
+    'content.apps.ContentConfig',
+    'tasks.apps.TasksConfig',
 ]
 
 MIDDLEWARE = [

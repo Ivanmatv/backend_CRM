@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator
 from merch.models import Merch
-# from tasks.models import Content
+# from tasks.models import Content, Task
 
 
 class Promocode(models.Model):
@@ -31,6 +31,45 @@ class Promocode(models.Model):
     def __str__(self):
         return (f'Промокод {self.name} '
                 f'{"(активен)" if self.status else "(неактивен)"}')
+
+
+class WorkIt(models.Model):
+    is_blog = models.BooleanField(
+        'Вести блог',
+        default=False
+    )
+    is_community = models.BooleanField(
+        'Развивать сообщество',
+        default=False
+    )
+    is_articles = models.BooleanField(
+        'Писать статьи',
+        default=False
+    )
+    is_video = models.BooleanField(
+        'Снимать видео',
+        default=False
+    )
+    is_workshop = models.BooleanField(
+        'Знакомить коллег с ЯП',
+        default=False
+    )
+    is_advice = models.BooleanField(
+        'Консультировать по ЯП',
+        default=False
+    )
+    is_events = models.BooleanField(
+        'Выступать на мероприятиях',
+        default=False
+    )
+
+    class Meta:
+        verbose_name = 'Желаемая деятельность'
+        verbose_name_plural = 'Желаемые виды деятельности'
+        ordering = ('pk',)
+
+    def __str__(self):
+        return f'{self.ambassador.first_name} {self.ambassador.last_name}'
 
 
 class Ambassador(models.Model):
@@ -172,6 +211,12 @@ class Ambassador(models.Model):
         'Ссылка на соцсеть',
         null=True
     )
+    work_it = models.ForeignKey(
+        WorkIt,
+        verbose_name='Желаемая деятельность',
+        related_name='work_it',
+        on_delete=models.CASCADE,
+    )
     comments = models.CharField(
         'О себе',
         null=True,
@@ -186,9 +231,9 @@ class Ambassador(models.Model):
         'Размер обуви',
         validators=[MaxValueValidator(50)]
     )
-    # content = models.models.ForeignKey(
-    #     Content,
-    #     verbose_name=('Контент'),
+    # task_id = models.models.ForeignKey(
+    #     Task,
+    #     verbose_name=('Задача'),
     #     on_delete=models.CASCADE
     # )
     merch = models.ManyToManyField(
@@ -205,6 +250,12 @@ class Ambassador(models.Model):
         'Амбассадор прошел Онбординг',
         default=False,
     )
+    # content = models.ManyToManyField(
+    #     Content,
+    #     through='AmbassadorContent',
+    #     verbose_name='Контент',
+    #     related_name='content'
+    # )
 
     class Meta:
         verbose_name = 'Амбассадор'
@@ -213,50 +264,6 @@ class Ambassador(models.Model):
 
     def __str__(self):
         return f'Амбассадор {self.first_name} {self.last_name}'
-
-
-class WorkIt(models.Model):
-    ambassador = models.ForeignKey(
-        Ambassador,
-        verbose_name='ID амбассадора',
-        on_delete=models.CASCADE
-    )
-    is_blog = models.BooleanField(
-        'Вести блог',
-        default=False
-    )
-    is_community = models.BooleanField(
-        'Развивать сообщество',
-        default=False
-    )
-    is_articles = models.BooleanField(
-        'Писать статьи',
-        default=False
-    )
-    is_video = models.BooleanField(
-        'Снимать видео',
-        default=False
-    )
-    is_workshop = models.BooleanField(
-        'Знакомить коллег с ЯП',
-        default=False
-    )
-    is_advice = models.BooleanField(
-        'Консультировать по ЯП',
-        default=False
-    )
-    is_events = models.BooleanField(
-        'Выступать на мероприятиях',
-        default=False
-    )
-
-    class Meta:
-        verbose_name = 'Желаемая деятельность'
-        verbose_name_plural = 'Желаемые виды деятельности'
-        ordering = ('pk',)
-
-    def __str__(self):
-        return f'{self.ambassador.first_name} {self.ambassador.last_name}'
 
 
 class AmbassadorPromocode(models.Model):

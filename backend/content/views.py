@@ -9,5 +9,4 @@ class ContentAmbassadorView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         ambassador_id = self.kwargs.get("ambassador_id")
-        new_queryset = Contents.objects.filter(ambassador=ambassador_id)
-        return new_queryset
+        return Contents.objects.filter(ambassador=ambassador_id)

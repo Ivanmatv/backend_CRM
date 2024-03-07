@@ -6,10 +6,10 @@ from .models import Merch, Order, MerchOrder
 @admin.register(Merch)
 class MerchAdmin(admin.ModelAdmin):
     list_display = (
+        'name',
         'size_foot',
         'size_shirt',
         'price',
-        'name',
         'desc',
         'status',
         'category',
@@ -36,6 +36,10 @@ class MerchAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+class MerchOrderInline(admin.TabularInline):
+    model = MerchOrder
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
@@ -44,16 +48,19 @@ class OrderAdmin(admin.ModelAdmin):
         'count',
         'date_creation'
     )
+    inlines = [MerchOrderInline]
     list_filter = (
         'name',
         'cost',
         'count',
+        'merchs',
         'date_creation'
     )
     search_fields = (
         'name',
         'cost',
         'count',
+        'merchs',
         'date_creation'
     )
     empty_value_display = '-пусто-'

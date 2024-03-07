@@ -6,47 +6,82 @@ from .models import Merch, Order, MerchOrder
 
 
 class MerchSerializer(serializers.ModelSerializer):
-    """Serializer to read/update merchandises"""
+    """Serializer for the merchandise"""
     image = Base64ImageField(required=False, allow_null=True)
+    size_foot = serializers.IntegerField(required=False)
+    quantity = serializers.IntegerField()
+    price = serializers.IntegerField()
 
     class Meta:
         model = Merch
-        fields = (
-            'id',
-            'size_foot',
-            'size_shirt',
-            'price',
-            'name',
-            'desc',
-            'quantity',
-            'status',
-            'category',
-            'data_creation',
-            'data_update',
-            'image'
-        )
+        fields = '__all__'
+
+    def validate_size_foot(self, size_foot):
+        if size_foot < 22 or size_foot > 33:
+            raise serializers.ValidationError(
+                "Размер обуви должен быть в промежутке от 22 до 33 см"
+            )
+        return size_foot
+
+    def validate_quantity(self, quantity):
+        if quantity < 1:
+            raise serializers.ValidationError(
+                "Количество должно быть больше 0"
+            )
+        return quantity
+
+    def validate_price(self, price):
+        if price < 1:
+            raise serializers.ValidationError(
+                "Цена должна быть больше 0"
+            )
+        return price
 
 
-class OrderSerializer(serializers.ModelSerializer):
-    """Serializer to read/update order"""
+class GetOrderSerializer(serializers.ModelSerializer):
+    """Read serializer order"""
+    merchs = MerchSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
-        fields = (
-            'id',
-            'name',
-            'cost',
-            'count',
-            'date_creation'
-        )
+        fields = '__all__'
+
+    def get_merchs(self, obj):
+        return MerchSerializer(
+            MerchOrder.objects.filter(merch=obj),
+            many=True,
+        ).data
+
+
+class AddOrderSerializer(serializers.ModelSerializer):
+    """Serializer for the order"""
+    cost = serializers.IntegerField()
+    count = serializers.IntegerField()
+    merchs = MerchSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ('cost', 'count', 'name', 'merchs')
+        read_only_field = 'date_creation'
+
+    def validate_count(self, quantity):
+        if quantity < 1:
+            raise serializers.ValidationError(
+                "Количество должно быть больше 0"
+            )
+        return quantity
+
+    def validate_cost(self, price):
+        if price < 1:
+            raise serializers.ValidationError(
+                "Стоймость должна быть больше 0"
+            )
+        return price
 
 
 class MerchOrderSerializer(serializers.ModelSerializer):
+    """Serializer for the order of ambassador"""
 
     class Meta:
         model = MerchOrder
-        fields = (
-            'id',
-            'merch',
-            'order'
-        )
+        fields = ('__all__')

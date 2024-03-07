@@ -7,12 +7,25 @@ class Merch(models.Model):
         ('IN STOCK', 'В наличии'),
         ('OUT', 'Закончилось'),
     )
-
-    size_foot = models.PositiveIntegerField(
-        verbose_name='Размер обуви'
+    SIZE = (
+        ('XS', 'XS'),
+        ('S', 'S'),
+        ('M', 'M'),
+        ('L', 'L'),
+        ('XL', 'XL'),
     )
-    size_shirt = models.PositiveIntegerField(
-        verbose_name='Размер одежды'
+    size_foot = models.PositiveIntegerField(
+        verbose_name='Размер обуви, см',
+        default=None,
+        null=True,
+        blank=True
+    )
+    size_shirt = models.CharField(
+        verbose_name='Размер одежды',
+        max_length=10,
+        choices=SIZE,
+        null=True,
+        blank=True
     )
     price = models.FloatField(
         verbose_name='Цена'
@@ -23,7 +36,9 @@ class Merch(models.Model):
     )
     desc = models.CharField(
         max_length=200,
-        verbose_name='Описание'
+        verbose_name='Описание',
+        null=True,
+        blank=True
     )
     quantity = models.PositiveIntegerField(
         verbose_name='Количество',
@@ -42,11 +57,11 @@ class Merch(models.Model):
         verbose_name='Дата создания'
     )
     data_update = models.DateTimeField(
-        auto_now_add=True,
+        auto_now=True,
         verbose_name='Дата обновления'
     )
     image = models.FileField(
-        upload_to='merchs/media/image/',
+        upload_to='media/image/',
         verbose_name='Изображения',
         blank=True,
         null=True,
@@ -59,8 +74,8 @@ class Merch(models.Model):
         ordering = ('name',)
 
     def __str__(self) -> str:
-        return (f'Товар {self.name}'
-                f'{"(в наличии)" if self.status else "(закончилось)"}')
+        return (f'{self.name} '
+                f'{"(в наличии )" if self.status else "(закончилось)"}')
 
 
 class Order(models.Model):
@@ -68,17 +83,23 @@ class Order(models.Model):
 
     name = models.CharField(
         max_length=100,
-        verbose_name='Имя амбассадора'
+        verbose_name='Название'
     )
-    cost = models.FloatField(
-        verbose_name='Цена товара'
+    cost = models.PositiveIntegerField(
+        verbose_name='Стоймость'
     )
-    count = models.IntegerField(
+    count = models.PositiveIntegerField(
         verbose_name='Количество товара'
     )
     date_creation = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Дата создания'
+    )
+    merchs = models.ManyToManyField(
+        Merch,
+        through='MerchOrder',
+        related_name='merchs',
+        verbose_name='Товары'
     )
 
     class Meta:
@@ -109,6 +130,7 @@ class MerchOrder(models.Model):
         verbose_name = 'Заказ товара'
         verbose_name_plural = 'Заказы товаров'
         ordering = ('pk',)
+        unique_together = ('merch', 'order')
 
     def __str__(self):
-        return (f'{self.merch_id} - {self.order_id}')
+        return (f'{self.merch} - {self.order}')

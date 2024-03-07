@@ -14,7 +14,7 @@ class MerchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Merch
-        fields = ('__all__')
+        fields = '__all__'
 
     def validate_size_foot(self, size_foot):
         if size_foot < 22 or size_foot > 33:
@@ -38,19 +38,31 @@ class MerchSerializer(serializers.ModelSerializer):
         return price
 
 
-class OrderSerializer(serializers.ModelSerializer):
-    """Serializer for the order"""
-    cost = serializers.IntegerField()
-    count = serializers.IntegerField()
-    merch = serializers.StringRelatedField(
-        many=True,
-        read_only=True
-    )
-    date_creation = serializers.ReadOnlyField()
+class GetOrderSerializer(serializers.ModelSerializer):
+    """Read serializer order"""
+    merchs = MerchSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
-        fields = ('__all__')
+        fields = '__all__'
+
+    def get_merchs(self, obj):
+        return MerchSerializer(
+            MerchOrder.objects.filter(merch=obj),
+            many=True,
+        ).data
+
+
+class AddOrderSerializer(serializers.ModelSerializer):
+    """Serializer for the order"""
+    cost = serializers.IntegerField()
+    count = serializers.IntegerField()
+    merchs = MerchSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ('cost', 'count', 'name', 'merchs')
+        read_only_field = 'date_creation'
 
     def validate_count(self, quantity):
         if quantity < 1:
@@ -65,7 +77,9 @@ class OrderSerializer(serializers.ModelSerializer):
                 "Стоймость должна быть больше 0"
             )
         return price
-
+    
+    # def create(self, validated_data):
+        
 
 class MerchOrderSerializer(serializers.ModelSerializer):
     """Serializer for the order of ambassador"""

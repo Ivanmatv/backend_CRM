@@ -95,7 +95,7 @@ class Order(models.Model):
         auto_now_add=True,
         verbose_name='Дата создания'
     )
-    merch = models.ManyToManyField(
+    merchs = models.ManyToManyField(
         Merch,
         through='MerchOrder',
         related_name='merchs',
@@ -133,4 +133,4 @@ class MerchOrder(models.Model):
         unique_together = ('merch', 'order')
 
     def __str__(self):
-        return (f'{self.merch_id} - {self.order_id}')
+        return (f'{self.merch} - {self.order}')

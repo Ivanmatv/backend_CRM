@@ -53,14 +53,14 @@ class OrderAdmin(admin.ModelAdmin):
         'name',
         'cost',
         'count',
-        'merch',
+        'merchs',
         'date_creation'
     )
     search_fields = (
         'name',
         'cost',
         'count',
-        'merch',
+        'merchs',
         'date_creation'
     )
     empty_value_display = '-пусто-'

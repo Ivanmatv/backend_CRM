@@ -16,7 +16,7 @@ class Contents(models.Model):
         verbose_name='Ссылка',
         help_text='Введите ссылку на контент',
     )
-    guide = models.TextField(     # Возможно неверный формат. Непонятное поле. Возможно BooleanField
+    guide = models.TextField(     # Возможно неверный формат. BooleanField?
         verbose_name='Руководство',
         help_text='Введите руководство'
     )

@@ -8,5 +8,6 @@ router = routers.DefaultRouter()
 router.register('content', ContentAmbassadorView, basename='content')
 
 # urlpatterns = [
-#     path('ambassadors/<int:ambassadorId>/content/', ContentAmbassadorView.as_view()),
+#     path('ambassadors/<int:ambassadorId>/content/',
+#          ContentAmbassadorView.as_view()),
 # ]

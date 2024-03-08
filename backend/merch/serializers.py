@@ -48,7 +48,7 @@ class GetOrderSerializer(serializers.ModelSerializer):
 
     def get_merchs(self, obj):
         return MerchSerializer(
-            MerchOrder.objects.filter(merch=obj),
+            Merch.objects.filter(merch=obj),
             many=True,
         ).data
 
@@ -57,12 +57,16 @@ class AddOrderSerializer(serializers.ModelSerializer):
     """Serializer for the order"""
     cost = serializers.IntegerField()
     count = serializers.IntegerField()
-    merchs = MerchSerializer(many=True)
+    # merchs = MerchSerializer(many=True)
+    merchs = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Merch.objects.all(),
+        write_only=True)
 
     class Meta:
         model = Order
         fields = ('cost', 'count', 'name', 'merchs')
-        read_only_field = 'date_creation'
+        read_only_fields = ('date_creation',)
 
     def validate_count(self, quantity):
         if quantity < 1:
@@ -77,6 +81,13 @@ class AddOrderSerializer(serializers.ModelSerializer):
                 "Стоймость должна быть больше 0"
             )
         return price
+
+    # def create(self, validated_data):
+    #     merchs_data = validated_data.pop('merchs')
+    #     order = Order.objects.create(**validated_data)
+    #     for merch_data in merchs_data:
+    #         MerchOrder.objects.create(order=order, **merch_data)
+    #     return order
 
 
 class MerchOrderSerializer(serializers.ModelSerializer):

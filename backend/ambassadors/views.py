@@ -1,16 +1,21 @@
 from rest_framework import mixins, viewsets, permissions
 from django.shortcuts import get_object_or_404
-from .models import Ambassador, AmbassadorMerch, AmbassadorPromocode
+from .models import Ambassador, Promocode, AmbassadorMerch, AmbassadorPromocode
 from .serializers import (GetAmbassadorSerializer,
                           AddAmbassadorSerializer,
                           GetAmbassadorPromocodeSerializer,
                           AddAmbassadorPromocodeSerializer,
-                          AddAmbassadorMerchSerializer,
-                          GetAmbassadorMerchSerializer)
+                          GetAmbassadorMerchSerializer,
+                          AddAmbassadorMerchSerializer)
 
 
 class AmbassadorViewSet(viewsets.ModelViewSet):
     queryset = Ambassador.objects.all()
+    filterset_fields = ('status', 'first_name', 'last_name', 'second_name',
+                        'telegram', 'gender', 'course', 'promocode',
+                        'onboarding', 'guide')
+    search_fields = ('first_name', 'last_name', 'second_name', 'telegram',
+                     'email', 'promocode__name')
 
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
@@ -19,6 +24,7 @@ class AmbassadorViewSet(viewsets.ModelViewSet):
 
 
 class AmbassadorMerchViewSet(mixins.CreateModelMixin,
+                             mixins.UpdateModelMixin,
                              mixins.ListModelMixin,
                              viewsets.GenericViewSet):
 
@@ -54,4 +60,6 @@ class AmbassadorPromocodeViewSet(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         ambassador = get_object_or_404(Ambassador, pk=self.kwargs.get('id'))
+        Promocode.objects.filter(
+            promo_ambassador__ambassador=ambassador).update(status=False)
         return serializer.save(ambassador=ambassador)

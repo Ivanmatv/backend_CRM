@@ -1,5 +1,8 @@
 from django.db import models
-from django.core.validators import MaxValueValidator
+from django.core.validators import (MaxValueValidator,
+                                    MinValueValidator,
+                                    MinLengthValidator,
+                                    RegexValidator)
 from merch.models import Merch
 # from tasks.models import Content, Task
 
@@ -7,17 +10,18 @@ from merch.models import Merch
 class Promocode(models.Model):
     date_start = models.DateTimeField(
         'Дата начала',
-        auto_now_add=True
+        auto_now_add=True,
     )
     date_end = models.DateTimeField(
         'Дата окончания',
-        auto_now=False,
-        auto_now_add=False
+        validators=(MinValueValidator(limit_value=date_start),)
     )
     name = models.CharField(
         'Промокод',
         max_length=32,
-        unique=True
+        validators=(MinLengthValidator(limit_value=3),
+                    RegexValidator(regex=r'^[A-Z0-9]+$'),),
+        unique=True,
     )
     status = models.BooleanField(
         'Активен',
@@ -135,7 +139,7 @@ class Ambassador(models.Model):
     telegram = models.CharField(
         'Ник в телеграме',
         max_length=32,
-        unique=True
+        unique=True,
     )
     first_name = models.CharField(
         'Имя',
@@ -148,6 +152,7 @@ class Ambassador(models.Model):
     second_name = models.CharField(
         'Отчество',
         max_length=100,
+        null=True,
     )
     gender = models.CharField(
         'Пол',
@@ -177,6 +182,7 @@ class Ambassador(models.Model):
     )
     email = models.EmailField(
         'Email',
+        unique=True,
     )
     phone = models.CharField(
         'Телефон',
@@ -184,7 +190,7 @@ class Ambassador(models.Model):
     )
     education = models.CharField(
         'Образование',
-        max_length=256,
+        max_length=255,
     )
     status = models.CharField(
         'Статус',
@@ -194,7 +200,7 @@ class Ambassador(models.Model):
     )
     work = models.CharField(
         'Место работы',
-        max_length=256,
+        max_length=255,
     )
     promocode = models.ManyToManyField(
         Promocode,
@@ -205,7 +211,12 @@ class Ambassador(models.Model):
     purpose = models.CharField(
         'Цель обучения в Практикуме',
         choices=PURPOSES,
-        max_length=12
+        max_length=12,
+    )
+    other = models.CharField(
+        'Цель обучения (другое)',
+        null=True,
+        max_length=255,
     )
     social = models.URLField(
         'Ссылка на соцсеть',
@@ -217,10 +228,10 @@ class Ambassador(models.Model):
         related_name='work_it',
         on_delete=models.CASCADE,
     )
-    comments = models.CharField(
+    comments = models.TextField(
         'О себе',
         null=True,
-        max_length=1000
+        max_length=1000,
     )
     shirt_size = models.CharField(
         'Размер одежды',
@@ -229,7 +240,7 @@ class Ambassador(models.Model):
     )
     foot_size = models.PositiveSmallIntegerField(
         'Размер обуви',
-        validators=[MaxValueValidator(50)]
+        validators=(MaxValueValidator(50),)
     )
     # task_id = models.models.ForeignKey(
     #     Task,

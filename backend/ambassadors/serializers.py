@@ -125,9 +125,9 @@ class GetAmbassadorSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'telegram', 'first_name', 'last_name', 'second_name',
             'gender', 'course', 'country', 'postcode', 'city', 'address',
-            'email', 'phone', 'education', 'status', 'work', 'purpose',
+            'email', 'phone', 'education', 'status', 'work', 'purpose', 'other',
             'social', 'shirt_size', 'foot_size', 'promocodes', 'merch',
-            'comments', 'create_date', 'completed_guide', 'work_it'
+            'comments', 'create_date', 'completed_guide', 'work_it',
         )
         # 'content', task
 
@@ -141,13 +141,19 @@ class AddAmbassadorSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'telegram', 'first_name', 'last_name', 'second_name',
             'gender', 'course', 'country', 'postcode', 'city', 'address',
-            'email', 'phone', 'education', 'work', 'purpose', 'social',
-            'shirt_size', 'foot_size', 'comments', 'work_it'
+            'email', 'phone', 'education', 'work', 'purpose', 'other',
+            'social', 'shirt_size', 'foot_size', 'comments', 'work_it'
         )
         model = Ambassador
 
     def create(self, validated_data):
         work_it_data = validated_data.pop('work_it')
+        purpose = validated_data.get('purpose', None)
+        other = validated_data.get('other', None)
+
+        if purpose != other:
+            validated_data.pop('other', None)
+
         work_it = WorkIt.objects.create(**work_it_data)
         return Ambassador.objects.create(work_it=work_it, **validated_data)
 

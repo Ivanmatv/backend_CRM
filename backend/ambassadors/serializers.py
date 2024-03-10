@@ -42,7 +42,7 @@ class GetMerchSerializer(serializers.ModelSerializer):
 class AddAmbassadorMerchSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = ('pk', 'merch')
+        fields = ('id', 'merch')
         model = AmbassadorMerch
 
     def to_representation(self, instance):
@@ -66,7 +66,7 @@ class GetAmbassadorMerchSerializer(serializers.ModelSerializer):
     merch = GetMerchSerializer(read_only=True)
 
     class Meta:
-        fields = ('id', 'ambassador', 'merch')
+        fields = ('ambassador', 'merch')
         model = AmbassadorMerch
 
 
@@ -124,10 +124,11 @@ class GetAmbassadorSerializer(serializers.ModelSerializer):
     class Meta:
         fields = (
             'id', 'telegram', 'first_name', 'last_name', 'second_name',
-            'gender', 'course', 'country', 'postcode', 'city', 'address',
+            'gender', 'course', 'country', 'city', 'address', 'postcode',
             'email', 'phone', 'education', 'status', 'work', 'purpose',
-            'social', 'shirt_size', 'foot_size', 'promocodes', 'merch',
-            'comments', 'create_date', 'completed_guide', 'work_it'
+            'other', 'social', 'shirt_size', 'foot_size', 'work_it',
+            'comments', 'promocodes', 'merch', 'guide', 'onboarding',
+            'create_date',
         )
         # 'content', task
 
@@ -139,17 +140,43 @@ class AddAmbassadorSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'id', 'telegram', 'first_name', 'last_name', 'second_name',
-            'gender', 'course', 'country', 'postcode', 'city', 'address',
-            'email', 'phone', 'education', 'work', 'purpose', 'social',
-            'shirt_size', 'foot_size', 'comments', 'work_it'
+            'telegram', 'first_name', 'last_name', 'second_name', 'gender',
+            'course', 'country', 'city', 'address', 'postcode', 'email',
+            'phone', 'education', 'work', 'purpose', 'other', 'social',
+            'shirt_size', 'foot_size', 'work_it', 'comments', 'guide',
+            'onboarding',
         )
         model = Ambassador
 
     def create(self, validated_data):
-        work_it_data = validated_data.pop('work_it')
+        work_it_data = validated_data.pop('work_it', None)
+        purpose = validated_data.get('purpose', None)
+        other = validated_data.get('other', None)
+
+        if purpose != other:
+            validated_data.pop('other', None)
+
         work_it = WorkIt.objects.create(**work_it_data)
         return Ambassador.objects.create(work_it=work_it, **validated_data)
+
+    def update(self, instance, validated_data):
+        work_it_data = validated_data.pop('work_it', None)
+        purpose = validated_data.get('purpose', None)
+        other = validated_data.get('other', None)
+
+        if purpose != other:
+            validated_data.pop('other', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+            instance.save()
+
+        if work_it_data:
+            work_it_instance, created = WorkIt.objects.get_or_create(
+                **work_it_data)
+            instance.work_it = work_it_instance
+
+        return instance
 
     def to_representation(self, instance):
         return GetAmbassadorSerializer(

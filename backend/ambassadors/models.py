@@ -1,23 +1,29 @@
+from django.utils import timezone
 from django.db import models
-from django.core.validators import MaxValueValidator
+from django.core.validators import (MaxValueValidator,
+                                    MinValueValidator,
+                                    MinLengthValidator,
+                                    RegexValidator)
 from merch.models import Merch
 # from tasks.models import Content, Task
 
 
 class Promocode(models.Model):
     date_start = models.DateTimeField(
-        'Дата начала',
-        auto_now_add=True
+        'Дата создания',
+        auto_now_add=True,
     )
     date_end = models.DateTimeField(
-        'Дата окончания',
-        auto_now=False,
-        auto_now_add=False
+        'Дата окончания действия',
+        validators=(MinValueValidator(limit_value=timezone.now()),),
+        null=True,
     )
     name = models.CharField(
         'Промокод',
         max_length=32,
-        unique=True
+        validators=(MinLengthValidator(limit_value=3),
+                    RegexValidator(regex=r'^[A-Z0-9]+$'),),
+        unique=True,
     )
     status = models.BooleanField(
         'Активен',
@@ -36,31 +42,31 @@ class Promocode(models.Model):
 class WorkIt(models.Model):
     is_blog = models.BooleanField(
         'Вести блог',
-        default=False
+        default=False,
     )
     is_community = models.BooleanField(
         'Развивать сообщество',
-        default=False
+        default=False,
     )
     is_articles = models.BooleanField(
         'Писать статьи',
-        default=False
+        default=False,
     )
     is_video = models.BooleanField(
         'Снимать видео',
-        default=False
+        default=False,
     )
     is_workshop = models.BooleanField(
         'Знакомить коллег с ЯП',
-        default=False
+        default=False,
     )
     is_advice = models.BooleanField(
         'Консультировать по ЯП',
-        default=False
+        default=False,
     )
     is_events = models.BooleanField(
         'Выступать на мероприятиях',
-        default=False
+        default=False,
     )
 
     class Meta:
@@ -69,7 +75,7 @@ class WorkIt(models.Model):
         ordering = ('pk',)
 
     def __str__(self):
-        return f'{self.ambassador.first_name} {self.ambassador.last_name}'
+        return (f'Желаемая деятельность {self.pk}')
 
 
 class Ambassador(models.Model):
@@ -135,7 +141,7 @@ class Ambassador(models.Model):
     telegram = models.CharField(
         'Ник в телеграме',
         max_length=32,
-        unique=True
+        unique=True,
     )
     first_name = models.CharField(
         'Имя',
@@ -148,6 +154,7 @@ class Ambassador(models.Model):
     second_name = models.CharField(
         'Отчество',
         max_length=100,
+        null=True,
     )
     gender = models.CharField(
         'Пол',
@@ -177,6 +184,7 @@ class Ambassador(models.Model):
     )
     email = models.EmailField(
         'Email',
+        unique=True,
     )
     phone = models.CharField(
         'Телефон',
@@ -184,7 +192,7 @@ class Ambassador(models.Model):
     )
     education = models.CharField(
         'Образование',
-        max_length=256,
+        max_length=255,
     )
     status = models.CharField(
         'Статус',
@@ -194,33 +202,23 @@ class Ambassador(models.Model):
     )
     work = models.CharField(
         'Место работы',
-        max_length=256,
-    )
-    promocode = models.ManyToManyField(
-        Promocode,
-        through='AmbassadorPromocode',
-        verbose_name='Промокод',
-        related_name='promocodes'
+        max_length=255,
     )
     purpose = models.CharField(
         'Цель обучения в Практикуме',
         choices=PURPOSES,
-        max_length=12
+        max_length=12,
+    )
+    other = models.CharField(
+        'Цель обучения (другое)',
+        null=True,
+        blank=True,
+        max_length=255,
     )
     social = models.URLField(
         'Ссылка на соцсеть',
-        null=True
-    )
-    work_it = models.ForeignKey(
-        WorkIt,
-        verbose_name='Желаемая деятельность',
-        related_name='work_it',
-        on_delete=models.CASCADE,
-    )
-    comments = models.CharField(
-        'О себе',
         null=True,
-        max_length=1000
+        blank=True,
     )
     shirt_size = models.CharField(
         'Размер одежды',
@@ -229,25 +227,38 @@ class Ambassador(models.Model):
     )
     foot_size = models.PositiveSmallIntegerField(
         'Размер обуви',
-        validators=[MaxValueValidator(50)]
+        validators=(MaxValueValidator(50),),
     )
-    # task_id = models.models.ForeignKey(
-    #     Task,
-    #     verbose_name=('Задача'),
-    #     on_delete=models.CASCADE
-    # )
+    work_it = models.ForeignKey(
+        WorkIt,
+        verbose_name='Желаемая деятельность',
+        related_name='work_it',
+        on_delete=models.CASCADE,
+    )
+    comments = models.TextField(
+        'О себе',
+        null=True,
+        blank=True,
+        max_length=1000,
+    )
+    promocode = models.ManyToManyField(
+        Promocode,
+        through='AmbassadorPromocode',
+        verbose_name='Промокод',
+        related_name='promocodes',
+    )
     merch = models.ManyToManyField(
         Merch,
         through='AmbassadorMerch',
         verbose_name='Мерч',
-        related_name='merch'
+        related_name='merch',
     )
-    create_date = models.DateTimeField(
-        'Дата создания',
-        auto_now_add=True
-    )
-    completed_guide = models.BooleanField(
+    onboarding = models.BooleanField(
         'Амбассадор прошел Онбординг',
+        default=False,
+    )
+    guide = models.BooleanField(
+        'Амбассадор выполнил задания из Гайда',
         default=False,
     )
     # content = models.ManyToManyField(
@@ -256,6 +267,15 @@ class Ambassador(models.Model):
     #     verbose_name='Контент',
     #     related_name='content'
     # )
+    # task = models.models.ForeignKey(
+    #     Task,
+    #     verbose_name=('Задача'),
+    #     on_delete=models.CASCADE
+    # )
+    create_date = models.DateTimeField(
+        'Дата создания',
+        auto_now_add=True,
+    )
 
     class Meta:
         verbose_name = 'Амбассадор'
@@ -271,13 +291,13 @@ class AmbassadorPromocode(models.Model):
         Ambassador,
         verbose_name='Амбассадор',
         on_delete=models.CASCADE,
-        related_name='ambassador_promo'
+        related_name='ambassador_promo',
     )
     promocode = models.ForeignKey(
         Promocode,
         verbose_name='Промокод',
         on_delete=models.CASCADE,
-        related_name='promo_ambassador'
+        related_name='promo_ambassador',
     )
 
     class Meta:
@@ -294,13 +314,13 @@ class AmbassadorMerch(models.Model):
         Merch,
         verbose_name='Мерч',
         on_delete=models.CASCADE,
-        related_name='merch_ambassador'
+        related_name='merch_ambassador',
     )
     ambassador = models.ForeignKey(
         Ambassador,
         verbose_name='Амбассадор',
         on_delete=models.CASCADE,
-        related_name='ambassador_merch'
+        related_name='ambassador_merch',
     )
 
     class Meta:

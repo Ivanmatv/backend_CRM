@@ -132,7 +132,6 @@ class GetAmbassadorSerializer(serializers.ModelSerializer):
             'comments', 'promocodes', 'merch', 'guide', 'onboarding',
             'create_date', 'content'
         )
-        # 'task'
 
         model = Ambassador
 

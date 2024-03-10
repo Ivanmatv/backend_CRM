@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from merch.models import Merch
+from content.serializers import ContentSerializer
 from .models import (Ambassador,
                      Promocode,
                      WorkIt,
@@ -120,6 +121,7 @@ class GetAmbassadorSerializer(serializers.ModelSerializer):
     )
     merch = GetMerchSerializer(many=True, read_only=True)
     work_it = WorkItSerializer(read_only=True)
+    content = ContentSerializer()
 
     class Meta:
         fields = (
@@ -128,9 +130,9 @@ class GetAmbassadorSerializer(serializers.ModelSerializer):
             'email', 'phone', 'education', 'status', 'work', 'purpose',
             'other', 'social', 'shirt_size', 'foot_size', 'work_it',
             'comments', 'promocodes', 'merch', 'guide', 'onboarding',
-            'create_date',
+            'create_date', 'content'
         )
-        # 'content', task
+        # 'task'
 
         model = Ambassador
 

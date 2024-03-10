@@ -12,6 +12,7 @@ from ambassadors.views import (AmbassadorViewSet,
 
 
 from merch.views import MerchViewSet, OrderViewSet, MerchOrderViewSet
+from content.views import ContentAmbassadorViewSet
 
 app_name = 'api'
 
@@ -32,6 +33,8 @@ urlpatterns = [
                                             ), name='get_promo'),
     path('ambassadors/<int:id>/merch/', AmbassadorMerchViewSet.as_view(
         {'get': 'list', 'post': 'create'}), name='get_merch'),
+    path('ambassadors/<int:id>/contents/', ContentAmbassadorViewSet.as_view(
+        {'get': 'list', 'post': 'create'})),
     path('', include('djoser.urls')),
     path('', include(router.urls)),
 ]

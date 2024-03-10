@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator
 from merch.models import Merch
-# from tasks.models import Content, Task
+from content.models import Contents
 
 
 class Promocode(models.Model):
@@ -250,12 +250,14 @@ class Ambassador(models.Model):
         'Амбассадор прошел Онбординг',
         default=False,
     )
-    # content = models.ManyToManyField(
-    #     Content,
-    #     through='AmbassadorContent',
-    #     verbose_name='Контент',
-    #     related_name='content'
-    # )
+    content = models.ForeignKey(
+        Contents,
+        #through='AmbassadorContent',
+        null=True,
+        verbose_name='Контент',
+        related_name='ambassador',
+        on_delete=models.CASCADE,
+    )
 
     class Meta:
         verbose_name = 'Амбассадор'

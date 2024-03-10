@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'users',
     'ambassadors',
     'merch',
-    'content.apps.ContentConfig',
+    'content.apps.ContentsConfig',
     'tasks.apps.TasksConfig',
 ]
 

@@ -149,7 +149,7 @@ class AddAmbassadorSerializer(serializers.ModelSerializer):
         model = Ambassador
 
     def create(self, validated_data):
-        work_it_data = validated_data.pop('work_it')
+        work_it_data = validated_data.pop('work_it', None)
         purpose = validated_data.get('purpose', None)
         other = validated_data.get('other', None)
 
@@ -160,11 +160,21 @@ class AddAmbassadorSerializer(serializers.ModelSerializer):
         return Ambassador.objects.create(work_it=work_it, **validated_data)
 
     def update(self, instance, validated_data):
+        work_it_data = validated_data.pop('work_it', None)
+        purpose = validated_data.get('purpose', None)
+        other = validated_data.get('other', None)
+
+        if purpose != other:
+            validated_data.pop('other', None)
 
         for attr, value in validated_data.items():
-            print(attr, value)
             setattr(instance, attr, value)
             instance.save()
+
+        if work_it_data:
+            work_it_instance, created = WorkIt.objects.get_or_create(
+                **work_it_data)
+            instance.work_it = work_it_instance
 
         return instance
 

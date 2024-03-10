@@ -75,8 +75,7 @@ class WorkIt(models.Model):
         ordering = ('pk',)
 
     def __str__(self):
-        return ('Желаемая деятельность амбассадора '
-                f'{self.ambassador.first_name} {self.ambassador.last_name}')
+        return (f'Желаемая деятельность {self.pk}')
 
 
 class Ambassador(models.Model):
@@ -213,11 +212,13 @@ class Ambassador(models.Model):
     other = models.CharField(
         'Цель обучения (другое)',
         null=True,
+        blank=True,
         max_length=255,
     )
     social = models.URLField(
         'Ссылка на соцсеть',
         null=True,
+        blank=True,
     )
     shirt_size = models.CharField(
         'Размер одежды',
@@ -237,6 +238,7 @@ class Ambassador(models.Model):
     comments = models.TextField(
         'О себе',
         null=True,
+        blank=True,
         max_length=1000,
     )
     promocode = models.ManyToManyField(

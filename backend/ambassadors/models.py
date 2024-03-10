@@ -5,7 +5,7 @@ from django.core.validators import (MaxValueValidator,
                                     MinLengthValidator,
                                     RegexValidator)
 from merch.models import Merch
-# from tasks.models import Content, Task
+from content.models import Contents
 
 
 class Promocode(models.Model):
@@ -257,19 +257,20 @@ class Ambassador(models.Model):
         'Амбассадор прошел Онбординг',
         default=False,
     )
+    content = models.ForeignKey(
+        Contents,
+        null=True,
+        verbose_name='Контент',
+        related_name='ambassador',
+        on_delete=models.CASCADE,
+    )
     guide = models.BooleanField(
         'Амбассадор выполнил задания из Гайда',
         default=False,
     )
-    # content = models.ManyToManyField(
-    #     Content,
-    #     through='AmbassadorContent',
-    #     verbose_name='Контент',
-    #     related_name='content'
-    # )
     # task = models.models.ForeignKey(
     #     Task,
-    #     verbose_name=('Задача'),
+    #     verbose_name='Задача',
     #     on_delete=models.CASCADE
     # )
     create_date = models.DateTimeField(

@@ -1,9 +1,6 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from content.models import Contents
-
-User = get_user_model()
 
 
 class ContentSerializer(serializers.ModelSerializer):

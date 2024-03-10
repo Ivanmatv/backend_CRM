@@ -5,7 +5,6 @@ from django.core.validators import (MaxValueValidator,
                                     MinLengthValidator,
                                     RegexValidator)
 from merch.models import Merch
-from content.models import Contents
 
 
 class Promocode(models.Model):
@@ -256,13 +255,6 @@ class Ambassador(models.Model):
     onboarding = models.BooleanField(
         'Амбассадор прошел Онбординг',
         default=False,
-    )
-    content = models.ForeignKey(
-        Contents,
-        null=True,
-        verbose_name='Контент',
-        related_name='ambassador',
-        on_delete=models.CASCADE,
     )
     guide = models.BooleanField(
         'Амбассадор выполнил задания из Гайда',

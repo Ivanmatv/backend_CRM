@@ -1,5 +1,7 @@
 from django.db import models
 
+from ambassadors.models import Ambassador
+
 
 class Contents(models.Model):
     name = models.CharField(
@@ -28,6 +30,11 @@ class Contents(models.Model):
         max_length=50,
         verbose_name='Статус контента',
         help_text='Выберите статус',
+    )
+    ambassador = models.ForeignKey(
+        Ambassador,
+        related_name='content',
+        on_delete=models.CASCADE
     )
 
     class Meta:

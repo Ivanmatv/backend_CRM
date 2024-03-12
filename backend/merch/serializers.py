@@ -57,11 +57,10 @@ class AddOrderSerializer(serializers.ModelSerializer):
     """Serializer for the order"""
     cost = serializers.IntegerField()
     count = serializers.IntegerField()
-    # merchs = MerchSerializer(many=True)
     merchs = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Merch.objects.all(),
-        write_only=True)
+        write_only=False)
 
     class Meta:
         model = Order
@@ -81,13 +80,6 @@ class AddOrderSerializer(serializers.ModelSerializer):
                 "Стоймость должна быть больше 0"
             )
         return price
-
-    # def create(self, validated_data):
-    #     merchs_data = validated_data.pop('merchs')
-    #     order = Order.objects.create(**validated_data)
-    #     for merch_data in merchs_data:
-    #         MerchOrder.objects.create(order=order, **merch_data)
-    #     return order
 
 
 class MerchOrderSerializer(serializers.ModelSerializer):

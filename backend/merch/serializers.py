@@ -77,9 +77,7 @@ class AddOrderSerializer(serializers.ModelSerializer):
                 "Стоймость должна быть больше 0"
             )
         return price
-    
-    # def create(self, validated_data):
-        
+
 
 class MerchOrderSerializer(serializers.ModelSerializer):
     """Serializer for the order of ambassador"""

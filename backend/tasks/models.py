@@ -1,14 +1,19 @@
 from datetime import date
 
-from django.contrib.auth import get_user_model
 from django.db import models
 
-User = get_user_model()
+from ambassadors.models import Ambassador
 
 
 class Tasks(models.Model):
+
+    STATUS = (
+        ('IN PROGRESS', 'В работе'),
+        ('PAUSE', 'Пауза'),
+        ('DONE', 'Закончил')
+    )
     title = models.CharField(
-        max_length=200,
+        max_length=150,
         unique=True,
         verbose_name='Название задачи',
         help_text='Введите название задачи')
@@ -26,11 +31,10 @@ class Tasks(models.Model):
         max_length=50,
         verbose_name='Статус контента',
         help_text='Выберите статус',
+        choices=STATUS
     )
-    # report_id = models.ForeignKey(
-    # )
     user_id = models.ForeignKey(
-        User,
+        Ambassador,
         on_delete=models.CASCADE,
         verbose_name='Автор задачи',
         help_text='Пользователь, написавший задачу',

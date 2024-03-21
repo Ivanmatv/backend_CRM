@@ -35,8 +35,7 @@ class AddPromocodeSerializer(serializers.ModelSerializer):
 class GetMerchSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = ('id', 'name', 'desc', 'size_foot', 'size_shirt', 'price',
-                  'quantity', 'data_creation', 'data_update')
+        fields = ('__all__')
         model = Merch
 
 

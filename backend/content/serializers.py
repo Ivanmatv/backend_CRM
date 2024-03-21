@@ -1,22 +1,11 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from content.models import Contents
-
-User = get_user_model()
+from content.models import Content
 
 
 class ContentSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Contents
-        fields = (
-            'name',
-            'platform',
-            'link',
-            'guide',
-            'description',
-            'status',
-            'id',
-            'ambassador')
+        model = Content
+        fields = ('__all__')
         read_only_fields = ('id',)

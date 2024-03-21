@@ -10,7 +10,7 @@ class MerchAdmin(admin.ModelAdmin):
         'size_foot',
         'size_shirt',
         'price',
-        'desc',
+        'description',
         'status',
         'category',
         'data_creation',

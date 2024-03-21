@@ -1,8 +1,8 @@
 from django.contrib import admin
-from content.models import Contents
+from content.models import Content
 
 
-@admin.register(Contents)
+@admin.register(Content)
 class ContentsAdmin(admin.ModelAdmin):
     list_display = ('name', 'platform', 'guide', 'status')
     list_filter = ('platform',)

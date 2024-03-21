@@ -1,13 +1,9 @@
-# from rest_framework.generics import ListAPIView
+from rest_framework import viewsets, permissions
 
-# from tasks.serializers import TasksSerializer
-
-# Задача связана с амбассадором Many-to-Many
-# Нужно добавлять сериализатор для связанной модели в Ambassador
+from .models import Tasks
+from .serializers import TasksSerializer
 
 
-# class SubscriptionsView(ListAPIView):
-#     serializer_class = TasksSerializer
-
-#     def get_queryset(self):
-#         return self.request.ambassador.tasks.all()
+class TaskViewSet(viewsets.ModelViewSet):
+    queryset = Tasks.objects.all()
+    serializer_class = TasksSerializer

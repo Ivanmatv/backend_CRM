@@ -1,7 +1,13 @@
 from django.db import models
 
 
-class Contents(models.Model):
+class Content(models.Model):
+
+    STATUS = (
+        ('IN PROGRESS', 'В работе'),
+        ('PAUSE', 'Пауза'),
+        ('DONE', 'Закончил')
+    )
     name = models.CharField(
         max_length=200,
         unique=True,
@@ -28,6 +34,7 @@ class Contents(models.Model):
         max_length=50,
         verbose_name='Статус контента',
         help_text='Выберите статус',
+        choices=STATUS
     )
 
     class Meta:

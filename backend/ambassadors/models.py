@@ -5,7 +5,7 @@ from django.core.validators import (MaxValueValidator,
                                     MinLengthValidator,
                                     RegexValidator)
 from merch.models import Merch
-from content.models import Contents
+from content.models import Content
 
 
 class Promocode(models.Model):
@@ -258,7 +258,7 @@ class Ambassador(models.Model):
         default=False,
     )
     content = models.ForeignKey(
-        Contents,
+        Content,
         null=True,
         verbose_name='Контент',
         related_name='ambassador',

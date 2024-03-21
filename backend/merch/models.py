@@ -34,7 +34,7 @@ class Merch(models.Model):
         max_length=100,
         verbose_name='Название'
     )
-    desc = models.CharField(
+    description = models.CharField(
         max_length=200,
         verbose_name='Описание',
         null=True,

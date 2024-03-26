@@ -61,7 +61,7 @@ class Merch(models.Model):
         verbose_name='Дата обновления'
     )
     image = models.FileField(
-        upload_to='media/image/',
+        upload_to='image/',
         verbose_name='Изображения',
         blank=True,
         null=True,
